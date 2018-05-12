@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
         for(std::string &word : parts) {
             std::transform(word.begin(), word.end(), word.begin(), tolower);
 
-            if(!word.empty() && word != "\r") {
+            if(!word.empty()) {
                 vector.push_back(word);
             }
         }
