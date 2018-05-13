@@ -25,7 +25,6 @@ int main(int argc, char **argv) {
 
     std::string delimiters(" ,.?");
     std::vector<std::string> parts;
-    std::vector<std::string> vector;
     for(std::string line; std::getline(file, line);) {
         boost::split(parts, line, boost::is_any_of(delimiters));
 
@@ -33,14 +32,17 @@ int main(int argc, char **argv) {
             std::transform(word.begin(), word.end(), word.begin(), tolower);
 
             if(!word.empty()) {
-                vector.push_back(word);
+                if(!bst->exists(Word(word))) {
+                    bst->insert(Word(word));
+
+                } else {
+                    bst->get(Word(word))->increaseCount();
+                }
             }
         }
     }
 
-    for(auto &word : vector) {
-        std::cout << word << std::endl;
-    }
+    bst->print();
 
     delete bst;
     return 0;

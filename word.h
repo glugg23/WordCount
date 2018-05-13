@@ -18,15 +18,8 @@ public:
         return count;
     }
 
-    /*
-     * This looks like a post-increment but actually is a pre-increment.
-     * This has been done for stylistic reasons as there should never be
-     * a reason to care in which order count gets increased
-     */
-
-    Word& operator++(int) {
+    void increaseCount() {
         ++count;
-        return *this;
     }
 
     bool operator==(const Word &rhs) const {

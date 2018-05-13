@@ -91,6 +91,21 @@ private:
         }
     }
 
+    void getHelper(Node<T> *node, const T& input, T*& ptr) {
+        if(node) {
+            if(input == node->data) {
+                ptr = &node->data;
+                return;
+
+            } else if(input < node->data) {
+                getHelper(node->left, input, ptr);
+
+            } else if(input > node->data) {
+                getHelper(node->right, input, ptr);
+            }
+        }
+    }
+
     void printHelper(const Node<T> *node) {
         if(node) {
             printHelper(node->left);
@@ -122,6 +137,12 @@ public:
         }
 
         return output;
+    }
+
+    T* get(const T& input) {
+        T* ptr = nullptr;
+        getHelper(root, input, ptr);
+        return ptr;
     }
 
     void print() {
