@@ -13,16 +13,40 @@ struct Sorter {
     }
 };
 
+void print(std::ostream &os, const int count, const std::vector<Word> &words) {
+    os << "Total word count: " << count << std::endl;
+    os << "Unique word count: "<< words.size() << std::endl;
+    os << '\n';
+
+    for(const auto &word : words) {
+        os << word << std::endl;
+    }
+}
+
 int main(int argc, char **argv) {
-    //TODO Have this work with command line arguments instead
-    std::cout << "Enter a file name: ";
-    std::string filename;
-    std::cin >> filename;
+    std::ifstream inputFile;
+    std::ofstream outputFile;
+    bool inputFlag = false, outputFlag = false, capitalFlag = false;
 
-    std::ifstream file;
-    file.open(filename);
+    for(int i = 0; i < argc; ++i) {
+        if(std::string(argv[i]) == "-i") {
+            inputFile.open(argv[i + 1]);
+            inputFlag = true;
+        }
 
-    if(!file.good()) {
+        if(std::string(argv[i]) == "-o") {
+            outputFile.open(argv[i + 1]);
+            outputFlag = true;
+        }
+
+        if(std::string(argv[i]) == "-c") {
+            capitalFlag = true;
+        }
+    }
+
+    //TODO Add section here to get input from cin when inputFlag is false
+
+    if(!inputFile.good()) {
         std::cerr << "ERROR: File does not exist or can not be accessed" << std::endl;
         return 1;
     }
@@ -33,11 +57,13 @@ int main(int argc, char **argv) {
     std::vector<std::string> parts;
     int totalCount = 0;
 
-    for(std::string line; std::getline(file, line);) {
+    for(std::string line; std::getline(inputFile, line);) {
         boost::split(parts, line, boost::is_any_of(delimiters));
 
         for(std::string &word : parts) {
-            std::transform(word.begin(), word.end(), word.begin(), tolower);
+            if(capitalFlag) {
+                std::transform(word.begin(), word.end(), word.begin(), tolower);
+            }
 
             if(!word.empty()) {
                 if(!bst->exists(Word(word))) {
@@ -57,12 +83,11 @@ int main(int argc, char **argv) {
 
     std::sort(words.begin(), words.end(), Sorter());
 
-    std::cout << "Total word count: " << totalCount << std::endl;
-    std::cout << "Unique word count: "<< words.size() << std::endl;
-    std::cout << '\n';
+    if(outputFlag) {
+        print(outputFile, totalCount, words);
 
-    for(const auto &word : words) {
-        std::cout << word << std::endl;
+    } else {
+        print(std::cout, totalCount, words);
     }
 
     delete bst;
