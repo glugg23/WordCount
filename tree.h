@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
 
 template <class T>
 class Node {
@@ -106,6 +107,14 @@ private:
         }
     }
 
+    void returnArrayHelper(const Node<T> *node, std::vector<T> &vector) {
+        if(node) {
+            returnArrayHelper(node->left, vector);
+            vector.push_back(node->data);
+            returnArrayHelper(node->right, vector);
+        }
+    }
+
     void printHelper(const Node<T> *node) {
         if(node) {
             printHelper(node->left);
@@ -143,6 +152,10 @@ public:
         T* ptr = nullptr;
         getHelper(root, input, ptr);
         return ptr;
+    }
+
+    void returnArray(std::vector<T> &vector) {
+        returnArrayHelper(root, vector);
     }
 
     void print() {

@@ -47,7 +47,7 @@ public:
     }
 
     friend std::ostream &operator<<(std::ostream &os, const Word &word) {
-        os << "{ word: \"" << word.word << "\", count: " << word.count << " }";
+        os << "word: \"" << word.word << "\", count: " << word.count;
         return os;
     }
 };
