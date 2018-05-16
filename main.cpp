@@ -7,11 +7,36 @@
 #include "tree.h"
 #include "word.h"
 
-struct Sorter {
-    bool operator()(const Word &a, const Word &b) const {
-        return a.getCount() > b.getCount();
+bool sorter(const Word &a, const Word &b) {
+    return a.getCount() > b.getCount();
+}
+
+void splitInput(BinarySearchTree<Word> *bst, std::istream &in, int &totalCount, bool capitalFlag) {
+    std::string delimiters(" ,.?");
+    std::vector<std::string> parts;
+
+    std::string line;
+    while(std::getline(in, line)) {
+        boost::split(parts, line, boost::is_any_of(delimiters));
+
+        for(std::string &word : parts) {
+            if(capitalFlag) {
+                std::transform(word.begin(), word.end(), word.begin(), tolower);
+            }
+
+            if(!word.empty()) {
+                if(!bst->exists(Word(word))) {
+                    bst->insert(Word(word));
+
+                } else {
+                    bst->get(Word(word))->increaseCount();
+                }
+
+                ++totalCount;
+            }
+        }
     }
-};
+}
 
 void print(std::ostream &os, const int count, const std::vector<Word> &words) {
     os << "Total word count: " << count << std::endl;
@@ -44,44 +69,30 @@ int main(int argc, char **argv) {
         }
     }
 
-    //TODO Add section here to get input from cin when inputFlag is false
-
-    if(!inputFile.good()) {
-        std::cerr << "ERROR: File does not exist or can not be accessed" << std::endl;
-        return 1;
-    }
-
     auto bst = new BinarySearchTree<Word>;
-
     std::string delimiters(" ,.?");
     std::vector<std::string> parts;
     int totalCount = 0;
 
-    for(std::string line; std::getline(inputFile, line);) {
-        boost::split(parts, line, boost::is_any_of(delimiters));
-
-        for(std::string &word : parts) {
-            if(capitalFlag) {
-                std::transform(word.begin(), word.end(), word.begin(), tolower);
-            }
-
-            if(!word.empty()) {
-                if(!bst->exists(Word(word))) {
-                    bst->insert(Word(word));
-
-                } else {
-                    bst->get(Word(word))->increaseCount();
-                }
-
-                ++totalCount;
-            }
+    if(inputFlag) {
+        if(!inputFile.good()) {
+            std::cerr << "ERROR: File does not exist or can not be accessed" << std::endl;
+            return 1;
         }
+
+        splitInput(bst, inputFile, totalCount, capitalFlag);
+
+    } else {
+        std::cout << "Enter string:\n"
+                     "(Press Ctrl-D on a new line to end)\n" << std::endl;
+
+        splitInput(bst, std::cin, totalCount, capitalFlag);
     }
 
     std::vector<Word> words;
     bst->returnArray(words);
 
-    std::sort(words.begin(), words.end(), Sorter());
+    std::sort(words.begin(), words.end(), sorter);
 
     if(outputFlag) {
         print(outputFile, totalCount, words);
