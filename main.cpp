@@ -7,10 +7,6 @@
 #include "tree.h"
 #include "word.h"
 
-bool sorter(const Word &a, const Word &b) {
-    return a.getCount() > b.getCount();
-}
-
 void splitInput(BinarySearchTree<Word> *bst, std::istream &in, int &totalCount, bool capitalFlag) {
     std::string delimiters(" ,.?");
     std::vector<std::string> parts;
@@ -92,7 +88,8 @@ int main(int argc, char **argv) {
     std::vector<Word> words;
     bst->returnArray(words);
 
-    std::sort(words.begin(), words.end(), sorter);
+    std::sort(words.begin(), words.end(),
+        [](Word a, Word b) { return a.getCount() > b.getCount(); });
 
     if(outputFlag) {
         print(outputFile, totalCount, words);
