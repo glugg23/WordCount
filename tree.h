@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <vector>
+#include <iterator>
 
 template <class T>
 class Node {
@@ -115,11 +116,44 @@ private:
         }
     }
 
-    void printHelper(const Node<T> *node) {
-        if(node) {
-            printHelper(node->left);
-            std::cout << *node << std::endl;
-            printHelper(node->right);
+    void removeHelper(Node<T> *&node, const T &input) {
+        if(!node) {
+            return;
+        }
+
+        if(input < node->data) {
+            removeHelper(node->left, input);
+
+        } else if(input > node->data) {
+            removeHelper(node->right, input);
+
+        } else {
+            if(!node->right && !node->left) {
+                delete node;
+                node = nullptr;
+                return;
+            }
+
+            if(!node->left) {
+                Node<T> *temp = node->right;
+                delete node;
+                node = temp;
+                return;
+
+            } else if(!node->right) {
+                Node<T> *temp = node->left;
+                delete node;
+                node = temp;
+                return;
+            }
+
+            Node<T> *temp = node->right;
+            while(temp->right) {
+                temp = temp->left;
+            }
+
+            node->data = temp->data;
+            removeHelper(node->right, temp->data);
         }
     }
 
@@ -148,7 +182,7 @@ public:
         return output;
     }
 
-    T* get(const T& input) {
+    T* get(const T &input) {
         T* ptr = nullptr;
         getHelper(root, input, ptr);
         return ptr;
@@ -158,7 +192,29 @@ public:
         returnArrayHelper(root, vector);
     }
 
-    void print() {
-        printHelper(root);
+    void remove(const T &input) {
+        removeHelper(root, input);
+    }
+
+    friend std::istream& operator>>(std::istream &in, BinarySearchTree<T> &tree) {
+        for(std::istream_iterator<T> iterator(in);
+            iterator != std::istream_iterator<T>();
+            iterator++) {
+
+            tree.insert(*iterator);
+        }
+
+        return in;
+    }
+
+    friend std::ostream& operator<<(std::ostream &out, BinarySearchTree<T> &tree) {
+        std::vector<T> temp;
+        tree.returnArray(temp);
+
+        for(auto &output : temp) {
+            out << output << '\n';
+        }
+
+        return out;
     }
 };

@@ -15,7 +15,7 @@ void splitInput(BinarySearchTree<Word> *bst, std::istream &in, int &totalCount, 
     while(std::getline(in, line)) {
         boost::split(parts, line, boost::is_any_of(delimiters));
 
-        for(std::string &word : parts) {
+        for(auto &word : parts) {
             if(capitalFlag) {
                 std::transform(word.begin(), word.end(), word.begin(), tolower);
             }
