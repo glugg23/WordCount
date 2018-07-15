@@ -7,7 +7,7 @@
 #include "tree.h"
 #include "word.h"
 
-void splitInput(BinarySearchTree<Word> *bst, std::istream &in, int &totalCount, bool capitalFlag) {
+void splitInput(std::unique_ptr<BinarySearchTree<Word>> &bst, std::istream &in, int &totalCount, bool capitalFlag) {
     std::string delimiters(" ,.?");
     std::vector<std::string> parts;
 
@@ -35,8 +35,8 @@ void splitInput(BinarySearchTree<Word> *bst, std::istream &in, int &totalCount, 
 }
 
 void print(std::ostream &os, const int count, const std::vector<Word> &words) {
-    os << "Total word count: " << count << std::endl;
-    os << "Unique word count: "<< words.size() << std::endl;
+    os << "Total word count: " << count << '\n';
+    os << "Unique word count: "<< words.size() << '\n';
     os << '\n';
 
     for(const auto &word : words) {
@@ -65,9 +65,7 @@ int main(int argc, char **argv) {
         }
     }
 
-    auto bst = new BinarySearchTree<Word>;
-    std::string delimiters(" ,.?");
-    std::vector<std::string> parts;
+    auto bst = std::make_unique<BinarySearchTree<Word>>();
     int totalCount = 0;
 
     if(inputFlag) {
@@ -98,6 +96,5 @@ int main(int argc, char **argv) {
         print(std::cout, totalCount, words);
     }
 
-    delete bst;
     return 0;
 }
